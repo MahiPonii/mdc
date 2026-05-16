@@ -6,36 +6,83 @@
 <link rel="icon" type="image/x-icon" href="./logo.ico">
 <title>MĐC Phốt Archive</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=Noto+Sans+Vietnamese:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- ✅ Font hỗ trợ tiếng Việt đầy đủ: Be Vietnam Pro thay Space Mono/IBM Plex Mono, Barlow Condensed thay Bebas Neue -->
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #181818;
-    --surface: #222222;
-    --surface2: #2a2a2a;
-    --border: #333333;
-    --accent: #c0392b;
-    --accent2: #e67e22;
-    --text: #d4d4d4;
-    --text-dim: #888888;
-    --text-bright: #f0ede8;
-    --ticker-bg: #c0392b;
-    --ticker-text: #fff8f0;
-    --radius: 12px;
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --surface: #161616;
+    --surface2: #1c1c1c;
+    --surface3: #222222;
+    --border: #252525;
+    --border2: #2e2e2e;
+    --accent: #d63031;
+    --accent-glow: rgba(214,48,49,0.22);
+    --accent2: #e17055;
+    --accent3: #fdcb6e;
+    --text: #c2bdb6;
+    --text-dim: #545454;
+    --text-muted: #363636;
+    --text-bright: #ede9e3;
+    --red-dark: #8b1a1a;
+    --radius: 8px;
+    --radius-lg: 14px;
+    /* Font stack với Vietnamese fallback */
+    --font-display: 'Barlow Condensed', 'Be Vietnam Pro', system-ui, sans-serif;
+    --font-body: 'Be Vietnam Pro', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    --noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
 
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: var(--font-body);
     min-height: 100vh;
     overflow-x: hidden;
+    cursor: default;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  /* ── SPLASH SCREEN ── */
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: var(--noise);
+    background-repeat: repeat;
+    background-size: 256px 256px;
+    pointer-events: none;
+    z-index: 9997;
+    opacity: 0.45;
+    mix-blend-mode: overlay;
+  }
+
+  /* ── SCANLINES ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 9996;
+  }
+
+  /* ─────────────────────────────── */
+  /*  SPLASH                         */
+  /* ─────────────────────────────── */
   #splash {
     position: fixed;
     inset: 0;
@@ -45,162 +92,187 @@
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    gap: 0;
-    transition: opacity 0.7s ease, transform 0.7s ease;
+    gap: 28px;
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   #splash.hide {
     opacity: 0;
     pointer-events: none;
-    transform: translateY(-30px);
+    transform: scale(0.97);
   }
 
-  .splash-card {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    max-width: 680px;
-    width: 90%;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(192,57,43,0.15);
+  .splash-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 5px;
+    color: var(--accent);
+    text-transform: uppercase;
+    animation: fadeUp 0.5s ease 0.1s both;
   }
 
-  .splash-logo-box {
-    flex-shrink: 0;
-    width: 160px;
-    height: 160px;
-    border-right: 1.5px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--surface2);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .splash-logo-box::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 50% 50%, rgba(192,57,43,0.08) 0%, transparent 70%);
-  }
-
-  .splash-logo-box img {
-    width: 110px;
-    height: 110px;
-    object-fit: contain;
-    border-radius: 8px;
-    position: relative;
-    z-index: 1;
-  }
-
-  .splash-logo-placeholder {
-    width: 100px;
-    height: 100px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #2c2c2c, #383838);
-    border: 1.5px dashed #444;
+  .splash-main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 6px;
-    position: relative;
-    z-index: 1;
+    gap: 0;
+    animation: fadeUp 0.6s ease 0.2s both;
   }
 
-  .splash-logo-placeholder span {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    color: var(--accent);
-    letter-spacing: 2px;
-  }
-
-  .splash-logo-placeholder small {
-    font-size: 9px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .splash-name {
-    flex: 1;
-    padding: 28px 32px;
-  }
-
-  .splash-name h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(20px, 4vw, 32px);
+  .splash-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(60px, 12vw, 116px);
     color: var(--text-bright);
-    letter-spacing: 1.5px;
-    line-height: 1.15;
-    margin-bottom: 8px;
-  }
-
-  .splash-name h1 span {
-    color: var(--accent);
-  }
-
-  .splash-name p {
-    font-size: 11px;
-    color: var(--text-dim);
-    letter-spacing: 0.5px;
-    line-height: 1.6;
-  }
-
-  .splash-sub {
-    margin-top: 20px;
-    font-size: 11px;
-    color: var(--text-dim);
+    letter-spacing: 3px;
+    line-height: 0.92;
     text-align: center;
-    letter-spacing: 1px;
+    position: relative;
+    /* Đảm bảo diacritics tiếng Việt không bị cắt */
+    padding-bottom: 0.1em;
+  }
+
+  .splash-title .red { color: var(--accent); }
+
+  .splash-title::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    color: var(--accent);
+    clip-path: polygon(0 60%, 100% 55%, 100% 65%, 0 70%);
+    opacity: 0;
+    animation: glitch1 4s infinite 1.2s;
+    transform: translateX(-2px);
+  }
+
+  .splash-subtitle {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 2.5px;
+    margin-top: 18px;
+    text-align: center;
+  }
+
+  .splash-divider {
+    width: min(440px, 85vw);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border2), var(--accent), var(--border2), transparent);
+    animation: fadeUp 0.6s ease 0.4s both;
+  }
+
+  .splash-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: fadeUp 0.5s ease 0.5s both;
+  }
+
+  .splash-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 1.4s ease infinite;
+    flex-shrink: 0;
+  }
+
+  .splash-status-text {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    font-family: var(--font-body);
+    font-style: italic;
+    font-weight: 300;
   }
 
   .splash-loader {
-    margin-top: 24px;
-    width: min(340px, 85vw);
-    height: 3px;
-    background: var(--border);
-    border-radius: 99px;
-    overflow: hidden;
+    width: min(440px, 85vw);
+    height: 2px;
+    background: var(--surface3);
+    position: relative;
+    animation: fadeUp 0.5s ease 0.6s both;
+    overflow: visible;
   }
 
   .splash-loader-bar {
     height: 100%;
     width: 0%;
-    background: var(--accent);
-    border-radius: 99px;
+    background: linear-gradient(90deg, var(--red-dark), var(--accent), var(--accent2));
     transition: width 2.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
   }
 
-  /* ── MAIN APP ── */
-  #app {
+  .splash-loader-bar::after {
+    content: '';
+    position: absolute;
+    right: 0; top: -2px;
+    width: 4px; height: 6px;
+    background: var(--accent2);
+    border-radius: 2px;
+    box-shadow: 0 0 8px var(--accent2);
+  }
+
+  .splash-logo-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    animation: fadeUp 0.6s ease 0.3s both;
+  }
+
+  .splash-logo-img {
+    width: 54px;
+    height: 54px;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    padding: 4px;
+    box-shadow: 0 0 20px rgba(214,48,49,0.15);
+  }
+
+  .splash-logo-fallback {
+    width: 54px;
+    height: 54px;
+    border-radius: 8px;
+    border: 1px solid var(--border2);
+    background: var(--surface);
     display: none;
-    flex-direction: column;
-    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--accent);
+    letter-spacing: 1px;
   }
 
+  /* ─────────────────────────────── */
+  /*  APP                            */
+  /* ─────────────────────────────── */
+  #app { display: none; flex-direction: column; min-height: 100vh; }
   #app.visible { display: flex; }
 
-  /* ── TICKER ── */
+  /* ─────────────────────────────── */
+  /*  TICKER                         */
+  /* ─────────────────────────────── */
   .ticker-wrap {
-    background: var(--ticker-bg);
+    background: var(--accent);
     overflow: hidden;
-    padding: 11px 0;
+    padding: 9px 0;
     position: sticky;
     top: 0;
     z-index: 100;
-    border-bottom: 2px solid rgba(0,0,0,0.3);
-    box-shadow: 0 2px 16px rgba(192,57,43,0.35);
+    border-bottom: 1px solid rgba(0,0,0,0.4);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 4px 24px rgba(214,48,49,0.4);
+    flex-shrink: 0;
   }
 
   .ticker-track {
     display: flex;
     white-space: nowrap;
-    animation: ticker 22s linear infinite;
+    animation: ticker 28s linear infinite;
     will-change: transform;
   }
 
@@ -209,20 +281,21 @@
   .ticker-item {
     display: inline-flex;
     align-items: center;
-    gap: 28px;
-    padding: 0 40px;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 17px;
+    gap: 20px;
+    padding: 0 30px;
+    /* Barlow Condensed hỗ trợ tiếng Việt tốt */
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14px;
     letter-spacing: 3px;
-    color: var(--ticker-text);
+    color: rgba(255,255,255,0.95);
+    text-transform: uppercase;
   }
 
-  .ticker-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.5);
-    flex-shrink: 0;
+  .ticker-sep {
+    color: rgba(255,255,255,0.35);
+    font-size: 16px;
+    line-height: 1;
   }
 
   @keyframes ticker {
@@ -230,323 +303,501 @@
     100% { transform: translateX(-50%); }
   }
 
-  /* ── HEADER ── */
+  /* ─────────────────────────────── */
+  /*  HEADER                         */
+  /* ─────────────────────────────── */
   .site-header {
-    background: var(--surface);
-    border-bottom: 1.5px solid var(--border);
-    padding: 14px 24px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
+    height: 60px;
+    flex-shrink: 0;
+    position: relative;
+    gap: 20px;
   }
 
-  .header-logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  .site-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0;
+    width: 200px; height: 1px;
+    background: linear-gradient(90deg, var(--accent), transparent);
   }
 
-  .header-logo-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    background: var(--accent);
+  .header-left {
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 16px;
-    color: white;
-    letter-spacing: 1px;
+    gap: 14px;
     flex-shrink: 0;
   }
 
-  .header-logo-text {
-    font-family: 'Bebas Neue', sans-serif;
+  .header-wordmark {
+    font-family: var(--font-display);
+    font-weight: 700;
     font-size: 20px;
     color: var(--text-bright);
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
+    line-height: 1;
+    text-transform: uppercase;
   }
 
-  .header-logo-text span { color: var(--accent); }
+  .header-wordmark em {
+    color: var(--accent);
+    font-style: normal;
+  }
 
-  .header-meta {
-    font-size: 11px;
+  .header-slash {
+    color: var(--border2);
+    font-size: 22px;
+    font-weight: 100;
+  }
+
+  .header-sub {
+    font-size: 10px;
     color: var(--text-dim);
+    letter-spacing: 2.5px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+  }
+
+  .header-right {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 16px;
   }
 
-  .count-badge {
-    background: var(--accent);
-    color: white;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 8px;
+  .count-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
     border-radius: 99px;
+    padding: 5px 14px;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    font-family: var(--font-body);
   }
 
-  /* ── MAIN GALLERY ── */
-  .gallery-container {
+  .count-pill strong {
+    color: var(--accent);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 1px;
+  }
+
+  /* ─────────────────────────────── */
+  /*  GALLERY AREA                   */
+  /* ─────────────────────────────── */
+  .gallery-shell {
     flex: 1;
-    padding: 28px 20px 60px;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
-  .gallery-section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 13px;
+  .gallery-bar {
+    padding: 20px 32px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .gallery-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 10px;
     letter-spacing: 3px;
     color: var(--text-dim);
     text-transform: uppercase;
-    margin-bottom: 18px;
-    border-left: 3px solid var(--accent);
-    padding-left: 10px;
   }
 
-  /* MASONRY GRID */
+  .gallery-label::before {
+    content: '';
+    width: 3px;
+    height: 14px;
+    background: var(--accent);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* ─────────────────────────────── */
+  /*  MASONRY                        */
+  /* ─────────────────────────────── */
+  .masonry-wrap {
+    padding: 20px 32px 80px;
+  }
+
   .masonry {
-    columns: 4 260px;
-    column-gap: 14px;
+    columns: 5 200px;
+    column-gap: 12px;
   }
 
   .masonry-item {
     break-inside: avoid;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
     border-radius: var(--radius);
     overflow: hidden;
     background: var(--surface);
     border: 1px solid var(--border);
     cursor: zoom-in;
-    transition: transform 0.22s cubic-bezier(0.23,1,0.32,1), box-shadow 0.22s, border-color 0.2s;
+    transition:
+      transform 0.3s cubic-bezier(0.23,1,0.32,1),
+      box-shadow 0.3s cubic-bezier(0.23,1,0.32,1),
+      border-color 0.2s;
     position: relative;
-    display: block;
+    animation: fadeInUp 0.5s ease both;
   }
 
   .masonry-item:hover {
-    transform: translateY(-4px) scale(1.012);
-    box-shadow: 0 16px 40px rgba(0,0,0,0.55), 0 0 0 1.5px var(--accent);
+    transform: translateY(-6px) scale(1.015);
+    box-shadow:
+      0 20px 50px rgba(0,0,0,0.7),
+      0 0 0 1px var(--accent),
+      0 0 30px var(--accent-glow);
     border-color: var(--accent);
-    z-index: 2;
+    z-index: 10;
   }
 
   .masonry-item img {
     width: 100%;
     height: auto;
     display: block;
-    border-radius: var(--radius);
     background: var(--surface2);
+    transition: filter 0.25s;
   }
 
-  .masonry-item .img-overlay {
+  .masonry-item:hover img {
+    filter: brightness(1.08) saturate(1.1);
+  }
+
+  .img-overlay {
     position: absolute;
-    bottom: 0; left: 0; right: 0;
-    padding: 22px 12px 12px;
-    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
-    border-radius: 0 0 var(--radius) var(--radius);
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.3) 35%, transparent 65%);
     opacity: 0;
-    transition: opacity 0.2s;
+    transition: opacity 0.25s;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 12px;
+    border-radius: var(--radius);
   }
 
   .masonry-item:hover .img-overlay { opacity: 1; }
 
-  .img-overlay-text {
-    font-size: 10px;
-    color: rgba(255,255,255,0.75);
-    letter-spacing: 0.5px;
-    text-align: right;
+  .img-overlay-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 26px;
+    color: rgba(255,255,255,0.18);
+    line-height: 1;
+    position: absolute;
+    top: 10px; right: 12px;
+    letter-spacing: 1px;
   }
 
-  /* ── EMPTY STATE ── */
+  .img-overlay-icon {
+    align-self: flex-end;
+    width: 28px; height: 28px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 2px 12px rgba(214,48,49,0.5);
+  }
+
+  /* ─────────────────────────────── */
+  /*  EMPTY STATE                    */
+  /* ─────────────────────────────── */
   .empty-state {
     text-align: center;
-    padding: 80px 20px;
+    padding: 100px 20px;
     color: var(--text-dim);
   }
 
   .empty-state .empty-icon {
-    font-size: 52px;
-    margin-bottom: 18px;
-    filter: grayscale(1) opacity(0.4);
+    font-size: 48px;
+    margin-bottom: 20px;
+    opacity: 0.25;
+    display: block;
   }
 
   .empty-state h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 26px;
-    letter-spacing: 2px;
-    color: #555;
-    margin-bottom: 10px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
   }
 
   .empty-state p {
     font-size: 12px;
-    line-height: 1.8;
-    max-width: 360px;
+    line-height: 2;
+    max-width: 380px;
     margin: 0 auto;
-    color: #555;
+    color: var(--text-dim);
+    font-weight: 300;
   }
 
   .empty-state code {
     display: inline-block;
     background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 2px 8px;
-    font-size: 11px;
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-size: 10px;
     color: var(--accent2);
-    margin: 2px;
+    font-family: var(--font-mono);
+    margin: 1px;
   }
 
-  /* ── LIGHTBOX ── */
+  /* ─────────────────────────────── */
+  /*  LIGHTBOX                       */
+  /* ─────────────────────────────── */
   #lightbox {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.93);
+    background: rgba(4,4,4,0.96);
     z-index: 9998;
     align-items: center;
     justify-content: center;
-    padding: 20px;
-    backdrop-filter: blur(8px);
+    padding: 24px;
+    backdrop-filter: blur(18px) saturate(0.3);
+    animation: lbFadeIn 0.2s ease;
   }
 
   #lightbox.open { display: flex; }
 
+  @keyframes lbFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
   .lightbox-inner {
     position: relative;
-    max-width: min(90vw, 960px);
-    max-height: 90vh;
+    max-width: min(92vw, 1000px);
+    max-height: 92vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
   }
 
-  .lightbox-inner img {
+  #lightbox-img {
     max-width: 100%;
-    max-height: 82vh;
+    max-height: 80vh;
     object-fit: contain;
     border-radius: var(--radius);
-    box-shadow: 0 32px 80px rgba(0,0,0,0.8);
+    box-shadow:
+      0 40px 100px rgba(0,0,0,0.9),
+      0 0 0 1px rgba(255,255,255,0.05);
     display: block;
+    animation: lbImgIn 0.25s cubic-bezier(0.23,1,0.32,1);
   }
 
-  .lightbox-close {
+  @keyframes lbImgIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .lb-topbar {
     position: absolute;
-    top: -14px;
-    right: -14px;
-    width: 36px;
-    height: 36px;
-    background: var(--accent);
-    border: none;
+    top: -52px; left: 0; right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .lb-counter {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 26px;
+    color: rgba(255,255,255,0.22);
+    letter-spacing: 2px;
+  }
+
+  .lb-close {
+    width: 38px; height: 38px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
     border-radius: 50%;
+    color: var(--text-dim);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
+    flex-shrink: 0;
+  }
+
+  .lb-close:hover {
+    background: var(--accent);
+    border-color: var(--accent);
     color: white;
+    transform: rotate(90deg);
+  }
+
+  .lb-bottombar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .lb-btn {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    color: var(--text-dim);
+    padding: 8px 20px;
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+
+  .lb-btn:hover {
+    background: var(--surface3);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .lb-filename {
+    flex: 1;
+    font-size: 10px;
+    color: rgba(255,255,255,0.18);
+    letter-spacing: 0.5px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-style: italic;
+    font-family: var(--font-mono);
+  }
+
+  /* Side arrows */
+  .lb-arrow {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px; height: 50px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 50%;
+    color: var(--text-dim);
     font-size: 18px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.2s;
     z-index: 1;
-    transition: background 0.15s, transform 0.15s;
   }
 
-  .lightbox-close:hover { background: #a93226; transform: scale(1.1); }
-
-  .lightbox-filename {
-    font-size: 11px;
-    color: rgba(255,255,255,0.4);
-    letter-spacing: 1px;
-  }
-
-  .lightbox-nav {
-    display: flex;
-    gap: 10px;
-  }
-
-  .lightbox-nav button {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 7px 18px;
-    border-radius: 8px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-  }
-
-  .lightbox-nav button:hover {
-    background: var(--surface2);
+  .lb-arrow:hover {
+    background: var(--accent);
     border-color: var(--accent);
-    color: var(--accent);
+    color: white;
+    transform: translateY(-50%) scale(1.1);
   }
 
-  /* ── FOOTER ── */
+  .lb-arrow-prev { left: 20px; }
+  .lb-arrow-next { right: 20px; }
+
+  /* ─────────────────────────────── */
+  /*  FOOTER                         */
+  /* ─────────────────────────────── */
   .site-footer {
-    background: var(--surface);
-    border-top: 1.5px solid var(--border);
-    padding: 18px 24px;
-    text-align: center;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+
+  .footer-brand {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 2.5px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  .footer-brand em { color: var(--accent); font-style: normal; }
+
+  .footer-meta {
     font-size: 10px;
-    color: var(--text-dim);
-    letter-spacing: 1px;
-    line-height: 2;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    font-style: italic;
+    font-family: var(--font-body);
+    font-weight: 300;
   }
 
-  .site-footer strong { color: var(--accent); }
-
-  /* ── HOW TO ADD ── */
-  .howto-bar {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 18px;
-    margin-bottom: 24px;
-    font-size: 11px;
-    color: var(--text-dim);
-    line-height: 1.9;
-    border-left: 3px solid var(--accent2);
+  /* ─────────────────────────────── */
+  /*  ANIMATIONS                     */
+  /* ─────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
-  .howto-bar strong { color: var(--accent2); }
-  .howto-bar code {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    padding: 1px 6px;
-    color: var(--text);
-    font-size: 10px;
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 600px) {
-    .masonry { columns: 2 140px; column-gap: 10px; }
-    .masonry-item { margin-bottom: 10px; }
-    .gallery-container { padding: 18px 12px 50px; }
-    .splash-logo-box { width: 100px; height: 100px; }
-    .splash-logo-placeholder { width: 72px; height: 72px; }
-    .splash-logo-placeholder span { font-size: 20px; }
-    .splash-name { padding: 20px 18px; }
-    .splash-name h1 { font-size: 18px; }
-  }
-
-  @media (min-width: 601px) and (max-width: 900px) {
-    .masonry { columns: 3 180px; }
-  }
-
-  /* ── LOAD ANIMATION ── */
-  .masonry-item {
-    animation: fadeInUp 0.4s ease both;
-  }
   @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(22px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(214,48,49,0.5); }
+    50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(214,48,49,0); }
+  }
+
+  @keyframes glitch1 {
+    0%, 90%, 100% { opacity: 0; }
+    91% { opacity: 0.7; transform: translateX(-3px) skewX(-1deg); }
+    93% { opacity: 0; transform: translateX(3px); }
+    95% { opacity: 0.5; transform: translateX(-2px); }
+    97% { opacity: 0; }
+  }
+
+  /* ─────────────────────────────── */
+  /*  RESPONSIVE                     */
+  /* ─────────────────────────────── */
+  @media (max-width: 600px) {
+    .masonry { columns: 2 130px; column-gap: 8px; }
+    .masonry-item { margin-bottom: 8px; }
+    .masonry-wrap { padding: 16px 14px 60px; }
+    .gallery-bar { padding: 16px 14px 0; }
+    .site-header { padding: 0 16px; }
+    .lb-arrow { display: none; }
+    .site-footer { flex-direction: column; align-items: flex-start; gap: 6px; padding: 16px; }
+    .splash-title { font-size: clamp(48px, 15vw, 76px); }
+  }
+
+  @media (min-width: 601px) and (max-width: 1024px) {
+    .masonry { columns: 3 180px; }
   }
 </style>
 </head>
@@ -554,34 +805,50 @@
 
 <!-- ════════ SPLASH ════════ -->
 <div id="splash">
-  <div class="splash-card">
-    <div class="splash-logo-box">
-      <!-- Nếu có logo.png cùng thư mục, nó sẽ tự hiện -->
-      <img id="splash-logo-img" src="logo.png" alt="Logo MĐC"
-           onerror="this.style.display='none'; document.getElementById('splash-logo-fallback').style.display='flex'">
-      <div class="splash-logo-placeholder" id="splash-logo-fallback" style="display:none">
-        <span>MĐC</span>
-        <small>logo</small>
-      </div>
-    </div>
-    <div class="splash-name">
-      <h1>TRƯỜNG THPT<br><span>Mạc Đĩnh Chi</span></h1>
-      <p>Phốt Archive · Lưu trữ<br>những gì cần được nhớ</p>
-    </div>
+  <div class="splash-eyebrow">Phốt Archive · MĐC · 2026</div>
+
+  <div class="splash-logo-row">
+    <img class="splash-logo-img" id="splash-logo-img" src="logo.png" alt="Logo MĐC"
+         onerror="this.style.display='none'; document.getElementById('splash-logo-fallback').style.display='flex'">
+    <div class="splash-logo-fallback" id="splash-logo-fallback">MĐC</div>
   </div>
-  <div class="splash-loader"><div class="splash-loader-bar" id="splash-bar"></div></div>
-  <p class="splash-sub" id="splash-sub-text">đang tải…</p>
+
+  <div class="splash-main">
+    <div class="splash-title" data-text="MẠC ĐĨNH CHI">
+      MẠC ĐĨNH CHI
+    </div>
+    <div class="splash-subtitle">Phốt Archive · Lưu trữ những gì cần được nhớ</div>
+  </div>
+
+  <div class="splash-divider"></div>
+
+  <div class="splash-status">
+    <span class="splash-status-dot"></span>
+    <span class="splash-status-text" id="splash-sub-text">đang tải…</span>
+  </div>
+
+  <div class="splash-loader">
+    <div class="splash-loader-bar" id="splash-bar"></div>
+  </div>
 </div>
 
 <!-- ════════ LIGHTBOX ════════ -->
-<div id="lightbox" onclick="closeLightbox(event)">
+<div id="lightbox">
+  <button class="lb-arrow lb-arrow-prev" onclick="lightboxNav(-1)">←</button>
+  <button class="lb-arrow lb-arrow-next" onclick="lightboxNav(1)">→</button>
+
   <div class="lightbox-inner" id="lightbox-inner">
-    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <div class="lb-topbar">
+      <div class="lb-counter" id="lb-counter">1 / 1</div>
+      <button class="lb-close" onclick="closeLightbox()">✕</button>
+    </div>
+
     <img id="lightbox-img" src="" alt="">
-    <div class="lightbox-nav">
-      <button onclick="lightboxNav(-1)">← Trước</button>
-      <span class="lightbox-filename" id="lightbox-name"></span>
-      <button onclick="lightboxNav(1)">Tiếp →</button>
+
+    <div class="lb-bottombar">
+      <button class="lb-btn" onclick="lightboxNav(-1)">← Trước</button>
+      <span class="lb-filename" id="lightbox-name"></span>
+      <button class="lb-btn" onclick="lightboxNav(1)">Tiếp →</button>
     </div>
   </div>
 </div>
@@ -591,56 +858,57 @@
 
   <!-- TICKER -->
   <div class="ticker-wrap" aria-hidden="true">
-    <div class="ticker-track" id="ticker-track">
-      <!-- populated by JS -->
-    </div>
+    <div class="ticker-track" id="ticker-track"></div>
   </div>
 
   <!-- HEADER -->
   <header class="site-header">
-    <div class="header-logo">
-      <div class="header-logo-icon">MĐC</div>
-      <div>
-        <div class="header-logo-text">Phốt Archive <span>·</span> MĐC</div>
-      </div>
+    <div class="header-left">
+      <div class="header-wordmark">PHỐT&nbsp;<em>ARCHIVE</em></div>
+      <span class="header-slash">/</span>
+      <span class="header-sub">MẠC ĐĨNH CHI</span>
     </div>
-    <div class="header-meta">
-      <span id="photo-count-label">Đang tải ảnh…</span>
-      <span class="count-badge" id="photo-count">0</span>
+    <div class="header-right">
+      <div class="count-pill">
+        <span id="photo-count-label">phốt</span>
+        <strong id="photo-count">0</strong>
+      </div>
     </div>
   </header>
 
   <!-- GALLERY -->
-  <main class="gallery-container">
-    <div class="gallery-section-title">☰ Tất cả phốt</div>
-
-    <div class="masonry" id="masonry-grid">
-      <!-- JS fills this -->
+  <div class="gallery-shell">
+    <div class="gallery-bar">
+      <div class="gallery-label">Tất cả phốt</div>
     </div>
 
-    <div class="empty-state" id="empty-state" style="display:none">
-      <div class="empty-icon">📭</div>
-      <h2>Chưa có ảnh nào</h2>
-      <p>
-        Đặt các file ảnh (<code>.jpg</code> <code>.png</code> <code>.jpeg</code>) vào thư mục
-        <code>image/</code> cạnh file <code>index.html</code> rồi mở lại trang này.<br><br>
-        Web sẽ tự quét và hiển thị lên.
-      </p>
-    </div>
+    <div class="masonry-wrap">
+      <div class="masonry" id="masonry-grid"></div>
 
-  </main>
+      <div class="empty-state" id="empty-state" style="display:none">
+        <span class="empty-icon">📭</span>
+        <h2>Chưa có ảnh nào</h2>
+        <p>
+          Đặt các file ảnh (<code>.jpg</code> <code>.png</code> <code>.jpeg</code>) vào thư mục
+          <code>image/</code> cạnh file <code>index.html</code> rồi mở lại trang này.<br><br>
+          Web sẽ tự quét và hiển thị lên.
+        </p>
+      </div>
+    </div>
+  </div>
 
   <!-- FOOTER -->
   <footer class="site-footer">
-    <strong>#BRING_MĐC_BACK</strong> · MAKE MẠC ĐĨNH CHI GREAT AGAIN<br>
-    Phốt Archive · Chỉ để đọc · Không upload ngoài
+    <div class="footer-brand">#BRING_MĐC_BACK · <em>MAKE MẠC ĐĨNH CHI GREAT AGAIN</em></div>
+    <div class="footer-meta">Chỉ để đọc · Không upload ngoài · Không kiểm duyệt</div>
   </footer>
 
 </div>
 
 <script>
-// Danh sách ảnh — cập nhật mỗi lần thêm ảnh mới vào thư mục image/
-// Format: ['image/ten-file.jpg', 'image/ten-file-2.png', ...]
+// ══════════════════════════════════════════
+//  IMAGE LIST — cập nhật mỗi lần thêm ảnh
+// ══════════════════════════════════════════
 const IMAGE_FILES = [
   'image/IMG_20260515_231100.jpg',
   'image/IMG_20260515_231512.jpg',
@@ -752,22 +1020,19 @@ const IMAGE_FILES = [
 //  TICKER
 // ══════════════════════════════════════════
 function buildTicker() {
-  const messages = [
-    'MAKE MẠC ĐĨNH CHI GREAT AGAIN',
-    '#BRING_MĐC_BACK',
+  const msgs = [
     'MAKE MẠC ĐĨNH CHI GREAT AGAIN',
     '#BRING_MĐC_BACK',
     'SỰ THẬT KHÔNG BAO GIỜ CHÌM',
     'MĐC · 2026',
-    'MAKE MẠC ĐĨNH CHI GREAT AGAIN',
+    'PHỐT ARCHIVE',
     '#BRING_MĐC_BACK',
   ];
-  // Duplicate for seamless loop
-  const all = [...messages, ...messages];
+  const all = [...msgs, ...msgs, ...msgs];
   const track = document.getElementById('ticker-track');
   track.innerHTML = all.map(m => `
     <span class="ticker-item">
-      <span class="ticker-dot"></span>${m}
+      <span class="ticker-sep">◆</span>${m}
     </span>
   `).join('');
 }
@@ -783,30 +1048,28 @@ function buildGallery(files) {
   const grid = document.getElementById('masonry-grid');
   const empty = document.getElementById('empty-state');
   const countEl = document.getElementById('photo-count');
-  const labelEl = document.getElementById('photo-count-label');
 
   grid.innerHTML = '';
 
   if (!files.length) {
     empty.style.display = 'block';
     countEl.textContent = '0';
-    labelEl.textContent = 'Chưa có ảnh —';
     return;
   }
 
   empty.style.display = 'none';
   countEl.textContent = files.length;
-  labelEl.textContent = `${files.length} phốt ·`;
 
   files.forEach((file, i) => {
     const item = document.createElement('div');
     item.className = 'masonry-item';
-    item.style.animationDelay = `${Math.min(i * 0.04, 1.2)}s`;
+    item.style.animationDelay = `${Math.min(i * 0.035, 1.5)}s`;
     item.innerHTML = `
       <img src="${file}" alt="Phốt ${i+1}" loading="lazy"
-           onerror="this.closest('.masonry-item').style.display='none'">
+           onerror="this.closest('.masonry-item').remove()">
       <div class="img-overlay">
-        <div class="img-overlay-text">${file}</div>
+        <div class="img-overlay-num">${String(i+1).padStart(2,'0')}</div>
+        <div class="img-overlay-icon">⊕</div>
       </div>
     `;
     item.addEventListener('click', () => openLightbox(i));
@@ -826,9 +1089,14 @@ function openLightbox(index) {
 
 function updateLightbox() {
   const file = currentImages[lightboxIndex];
-  document.getElementById('lightbox-img').src = file;
-  document.getElementById('lightbox-name').textContent =
-    `${lightboxIndex + 1} / ${currentImages.length} · ${file}`;
+  const img = document.getElementById('lightbox-img');
+  img.style.animation = 'none';
+  img.offsetHeight; // reflow
+  img.style.animation = '';
+  img.src = file;
+  document.getElementById('lightbox-name').textContent = file;
+  document.getElementById('lb-counter').textContent =
+    `${lightboxIndex + 1} / ${currentImages.length}`;
 }
 
 function lightboxNav(dir) {
@@ -836,28 +1104,21 @@ function lightboxNav(dir) {
   updateLightbox();
 }
 
-function closeLightbox(e) {
-  if (e && e.target !== document.getElementById('lightbox') &&
-      e.target !== document.querySelector('.lightbox-close')) return;
-  if (e && e.currentTarget === document.getElementById('lightbox') &&
-      !e.target.closest('#lightbox-inner') ) {
-    // clicked backdrop
-  } else if (e) return;
+function closeLightbox() {
   document.getElementById('lightbox').classList.remove('open');
   document.body.style.overflow = '';
 }
 
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target === this) closeLightbox();
+});
+
 document.addEventListener('keydown', e => {
   const lb = document.getElementById('lightbox');
   if (!lb.classList.contains('open')) return;
-  if (e.key === 'Escape') { closeLightbox(); }
+  if (e.key === 'Escape') closeLightbox();
   if (e.key === 'ArrowLeft') lightboxNav(-1);
   if (e.key === 'ArrowRight') lightboxNav(1);
-});
-
-// Fix lightbox backdrop click
-document.getElementById('lightbox').addEventListener('click', function(e) {
-  if (e.target === this) closeLightbox();
 });
 
 // ══════════════════════════════════════════
@@ -868,7 +1129,7 @@ function enterSite() {
   setTimeout(() => {
     document.getElementById('splash').style.display = 'none';
     document.getElementById('app').classList.add('visible');
-  }, 700);
+  }, 800);
 }
 
 // ══════════════════════════════════════════
@@ -877,36 +1138,33 @@ function enterSite() {
 (function init() {
   buildTicker();
 
-  // Nếu IMAGE_FILES có ảnh → dùng ngay
   if (IMAGE_FILES.length > 0) {
     buildGallery(IMAGE_FILES);
   } else {
     tryAutoScan();
   }
 
-  // Auto-dismiss splash sau 2.5s
   requestAnimationFrame(() => {
     setTimeout(() => {
       document.getElementById('splash-bar').style.width = '100%';
-      document.getElementById('splash-sub-text').textContent = 'chỉ xem · không upload · không kiểm duyệt';
-    }, 50);
+      document.getElementById('splash-sub-text').textContent =
+        'chỉ xem · không upload · không kiểm duyệt';
+    }, 60);
   });
-  setTimeout(enterSite, 2600);
+
+  setTimeout(enterSite, 2800);
 })();
 
 async function tryAutoScan() {
-  // Thử fetch index thư mục image/ (hoạt động nếu mở qua http-server, Python server, v.v.)
   try {
     const res = await fetch('image/', { cache: 'no-store' });
     const html = await res.text();
-    // Match cả href="filename.jpg" lẫn href="image/filename.jpg"
-    const matches = [...html.matchAll(/href="([^"?#]+\.(jpg|jpeg|png))"/gi)];
+    const matches = [...html.matchAll(/href="([^"?#]+\.(jpg|jpeg|png|JPG|JPEG|PNG))"/gi)];
     const files = [...new Set(
       matches
         .map(m => m[1])
         .filter(f => !f.startsWith('http'))
         .map(f => {
-          // Nếu path đã bao gồm 'image/' thì giữ nguyên, không thì thêm vào
           if (f.startsWith('image/') || f.startsWith('/image/')) return f;
           return 'image/' + f;
         })
