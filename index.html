@@ -1339,10 +1339,28 @@
           <span class="social-link-arrow">↗</span>
         </a>
 
+        <a href="https://www.threads.com/@toanisnottoan/post/DYblqLKgG2H?xmt=AQG0q_AIX2OEEEqRU1GtjmfCPfj48Azr_UCqyn28ZYgcQg" target="_blank" rel="noopener" class="social-link-card threads-card">
+          <div class="social-icon threads-icon">@</div>
+          <div class="social-link-text">
+            <div class="social-link-title">Threads · @toanisnottoan</div>
+            <div class="social-link-meta">Threads · Phốt MĐC</div>
+          </div>
+          <span class="social-link-arrow">↗</span>
+        </a>
+
         <a href="https://www.threads.com/@duckieverse_/post/DYbXCXTktx7?xmt=AQG0MfZZbFwoeTha2oE5AMdWkLRBGXw_CwtI22m2xPgxXg" target="_blank" rel="noopener" class="social-link-card threads-card">
           <div class="social-icon threads-icon">@</div>
           <div class="social-link-text">
-            <div class="social-link-title">Threads · @duckieverse_</div>
+            <div class="social-link-title">Threads · @_youmakemefeelspecial._</div>
+            <div class="social-link-meta">Threads · Phốt MĐC</div>
+          </div>
+          <span class="social-link-arrow">↗</span>
+        </a>
+
+        <a href="https://www.threads.com/@makemdcgreatagain/post/DYcNUvGkehB?xmt=AQG0exi8PmN689K8r4glxRF_IehBKKjlqQBg9thVGybLDw" target="_blank" rel="noopener" class="social-link-card threads-card">
+          <div class="social-icon threads-icon">@</div>
+          <div class="social-link-text">
+            <div class="social-link-title">Threads · @makemdcgreatagain</div>
             <div class="social-link-meta">Threads · Phốt MĐC</div>
           </div>
           <span class="social-link-arrow">↗</span>
@@ -1521,6 +1539,16 @@ const IMAGE_FILES = [
   'image/Screenshot 2026-05-17 140931.png',
   'image/Screenshot 2026-05-17 141129.png',
   'image/Screenshot 2026-05-17 141214.png',
+  'image/Screenshot 2026-05-17 200612.png',
+  'image/Screenshot 2026-05-17 200629.png',
+  'image/Screenshot 2026-05-17 200702.png',
+  'image/Screenshot 2026-05-17 200719.png',
+  'image/Screenshot 2026-05-17 200814.png',
+  'image/Screenshot 2026-05-17 200908.png',
+  'image/Screenshot 2026-05-17 201013.png',
+  'image/Screenshot 2026-05-17 201417.png',
+  'image/Screenshot 2026-05-17 201549.png',
+  'image/Screenshot 2026-05-17 202202.png',
 ];
 
 // ══════════════════════════════════════════
@@ -1694,11 +1722,7 @@ function enterSite() {
 (function init() {
   buildTicker();
 
-  if (IMAGE_FILES.length > 0) {
-    buildGallery(IMAGE_FILES);
-  } else {
-    tryAutoScan();
-  }
+  buildGallery(IMAGE_FILES);
 
   requestAnimationFrame(() => {
     setTimeout(() => {
@@ -1747,25 +1771,6 @@ document.addEventListener('keydown', e => {
   }
 });
 
-async function tryAutoScan() {
-  try {
-    const res = await fetch('image/', { cache: 'no-store' });
-    const html = await res.text();
-    const matches = [...html.matchAll(/href="([^"?#]+\.(jpg|jpeg|png|JPG|JPEG|PNG))"/gi)];
-    const files = [...new Set(
-      matches
-        .map(m => m[1])
-        .filter(f => !f.startsWith('http'))
-        .map(f => {
-          if (f.startsWith('image/') || f.startsWith('/image/')) return f;
-          return 'image/' + f;
-        })
-    )];
-    buildGallery(files);
-  } catch(e) {
-    buildGallery([]);
-  }
-}
 </script>
 </body>
 </html>
