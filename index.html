@@ -3,11 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- ══ SECURITY / PRIVACY META ══ -->
+<!-- Chặn crawler & index -->
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="bingbot" content="noindex, nofollow">
+<!-- Không cho referrer leak khi click link ngoài -->
+<meta name="referrer" content="no-referrer">
+<!-- Chặn cache proxy / CDN lưu nội dung -->
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, private">
+<meta http-equiv="Pragma" content="no-cache">
+<!-- Chặn MIME sniffing, XSS (những cái này hoạt động qua meta) -->
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-XSS-Protection" content="1; mode=block">
+<!-- Content Security Policy qua meta (frame-ancestors chỉ hoạt động qua HTTP header → xem vercel.json) -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; script-src 'self' 'unsafe-inline';">
+<!-- X-Frame-Options & frame-ancestors được set qua vercel.json (HTTP header) -->
+<!-- Tắt DNS prefetch -->
+<meta http-equiv="x-dns-prefetch-control" content="off">
+<!-- Ẩn thông tin trình tạo -->
+<!-- (không có generator tag) -->
 <link rel="icon" type="image/x-icon" href="./logo.ico">
 <title>MĐC Phốt Archive</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- ✅ Font hỗ trợ tiếng Việt đầy đủ: Be Vietnam Pro thay Space Mono/IBM Plex Mono, Barlow Condensed thay Bebas Neue -->
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -757,8 +776,55 @@
   }
 
   /* ─────────────────────────────── */
-  /*  ANIMATIONS                     */
+  /*  COPY LINK TOAST                */
   /* ─────────────────────────────── */
+  #copy-toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--surface3);
+    border: 1px solid var(--accent);
+    color: var(--text-bright);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    padding: 10px 22px;
+    border-radius: 99px;
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s, transform 0.22s;
+    white-space: nowrap;
+  }
+  #copy-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ─────────────────────────────── */
+  /*  LB COPY LINK BUTTON            */
+  /* ─────────────────────────────── */
+  .lb-copy-btn {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    color: var(--text-dim);
+    padding: 8px 14px;
+    border-radius: var(--radius);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .lb-copy-btn:hover {
+    background: var(--surface3);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
@@ -1217,7 +1283,7 @@
 
     <div class="lb-bottombar">
       <button class="lb-btn" onclick="lightboxNav(-1)">← Trước</button>
-      <span class="lb-filename" id="lightbox-name"></span>
+      <button class="lb-copy-btn" id="lb-copy-btn" onclick="copyCurrentImageLink()">🔗 Copy link</button>
       <button class="lb-btn" onclick="lightboxNav(1)">Tiếp →</button>
     </div>
   </div>
@@ -1309,7 +1375,7 @@
           <span class="social-link-arrow" style="color:var(--accent);">↗</span>
         </div>
 
-        <a href="https://www.facebook.com/share/p/18qTzH3odY/" target="_blank" rel="noopener" class="social-link-card">
+        <a href="https://www.facebook.com/share/p/18qTzH3odY/" target="_blank" rel="noopener noreferrer" class="social-link-card">
           <div class="social-icon threads-icon" style="padding:0;overflow:hidden;">
             <img src="icon/facebookIcon.png" alt="Google Drive" style="width:100%;height:100%;object-fit:contain;"></div>
           <div class="social-link-text">
@@ -1319,7 +1385,7 @@
           <span class="social-link-arrow">↗</span>
         </a>
 
-        <a href="https://www.facebook.com/share/p/1CfUJ52RPh/" target="_blank" rel="noopener" class="social-link-card">
+        <a href="https://www.facebook.com/share/p/1CfUJ52RPh/" target="_blank" rel="noopener noreferrer" class="social-link-card">
           <div class="social-icon threads-icon" style="padding:0;overflow:hidden;">
             <img src="icon/facebookIcon.png" alt="Google Drive" style="width:100%;height:100%;object-fit:contain;"></div>
           <div class="social-link-text">
@@ -1329,7 +1395,7 @@
           <span class="social-link-arrow">↗</span>
         </a>
 
-        <a href="https://www.facebook.com/share/p/17vi6erZjf/" target="_blank" rel="noopener" class="social-link-card">
+        <a href="https://www.facebook.com/share/p/17vi6erZjf/" target="_blank" rel="noopener noreferrer" class="social-link-card">
           <div class="social-icon threads-icon" style="padding:0;overflow:hidden;">
             <img src="icon/facebookIcon.png" alt="Google Drive" style="width:100%;height:100%;object-fit:contain;"></div>
           <div class="social-link-text">
@@ -1339,7 +1405,7 @@
           <span class="social-link-arrow">↗</span>
         </a>
 
-        <a href="https://www.threads.com/@toanisnottoan/post/DYblqLKgG2H?xmt=AQG0q_AIX2OEEEqRU1GtjmfCPfj48Azr_UCqyn28ZYgcQg" target="_blank" rel="noopener" class="social-link-card threads-card">
+        <a href="https://www.threads.com/@toanisnottoan/post/DYblqLKgG2H?xmt=AQG0q_AIX2OEEEqRU1GtjmfCPfj48Azr_UCqyn28ZYgcQg" target="_blank" rel="noopener noreferrer" class="social-link-card threads-card">
           <div class="social-icon threads-icon">@</div>
           <div class="social-link-text">
             <div class="social-link-title">Threads · @toanisnottoan</div>
@@ -1348,7 +1414,7 @@
           <span class="social-link-arrow">↗</span>
         </a>
 
-        <a href="https://www.threads.com/@duckieverse_/post/DYbXCXTktx7?xmt=AQG0MfZZbFwoeTha2oE5AMdWkLRBGXw_CwtI22m2xPgxXg" target="_blank" rel="noopener" class="social-link-card threads-card">
+        <a href="https://www.threads.com/@duckieverse_/post/DYbXCXTktx7?xmt=AQG0MfZZbFwoeTha2oE5AMdWkLRBGXw_CwtI22m2xPgxXg" target="_blank" rel="noopener noreferrer" class="social-link-card threads-card">
           <div class="social-icon threads-icon">@</div>
           <div class="social-link-text">
             <div class="social-link-title">Threads · @_youmakemefeelspecial._</div>
@@ -1357,7 +1423,7 @@
           <span class="social-link-arrow">↗</span>
         </a>
 
-        <a href="https://www.threads.com/@makemdcgreatagain/post/DYcNUvGkehB?xmt=AQG0exi8PmN689K8r4glxRF_IehBKKjlqQBg9thVGybLDw" target="_blank" rel="noopener" class="social-link-card threads-card">
+        <a href="https://www.threads.com/@makemdcgreatagain/post/DYcNUvGkehB?xmt=AQG0exi8PmN689K8r4glxRF_IehBKKjlqQBg9thVGybLDw" target="_blank" rel="noopener noreferrer" class="social-link-card threads-card">
           <div class="social-icon threads-icon">@</div>
           <div class="social-link-text">
             <div class="social-link-title">Threads · @makemdcgreatagain</div>
@@ -1366,7 +1432,7 @@
           <span class="social-link-arrow">↗</span>
         </a>
 
-        <a href="https://www.threads.com/@vivi227._.6/post/DYU2K8Sk5Mv?xmt=AQG0TKEiDyjKzVvsNtGjjfl4bvCWKxDcuTkwPzu2M_lSWw" target="_blank" rel="noopener" class="social-link-card threads-card">
+        <a href="https://www.threads.com/@vivi227._.6/post/DYU2K8Sk5Mv?xmt=AQG0TKEiDyjKzVvsNtGjjfl4bvCWKxDcuTkwPzu2M_lSWw" target="_blank" rel="noopener noreferrer" class="social-link-card threads-card">
           <div class="social-icon threads-icon">@</div>
           <div class="social-link-text">
             <div class="social-link-title">Threads · @vivi227._.6</div>
@@ -1375,7 +1441,7 @@
           <span class="social-link-arrow">↗</span>
         </a>
 
-        <a href="https://drive.google.com/drive/folders/1HdiGzBB7lcWCEpz1zRfrdI-y_3Fw1nLu?usp=sharing" target="_blank" rel="noopener" class="social-link-card threads-card">
+        <a href="https://drive.google.com/drive/folders/1HdiGzBB7lcWCEpz1zRfrdI-y_3Fw1nLu?usp=sharing" target="_blank" rel="noopener noreferrer" class="social-link-card threads-card">
           <div class="social-icon threads-icon" style="padding:0;overflow:hidden;">
             <img src="icon/driveIcon.png" alt="Google Drive" style="width:100%;height:100%;object-fit:contain;"></div>
           <div class="social-link-text">
@@ -1413,6 +1479,9 @@
   </footer>
 
 </div>
+
+<!-- COPY TOAST -->
+<div id="copy-toast">✓ Đã copy link ảnh</div>
 
 <script>
 // ══════════════════════════════════════════
@@ -1602,7 +1671,7 @@ function buildGallery(files) {
   videoCard.className = 'masonry-item video-card';
   videoCard.innerHTML = `
     <div class="video-thumb-wrap">
-      <video src="truongm.mp4" preload="metadata" muted playsinline
+      <video src="image/truongm.mp4" preload="metadata" muted playsinline
              onloadedmetadata="this.currentTime=2"></video>
       <div class="video-badge">VIDEO</div>
       <div class="video-play-btn">
@@ -1651,7 +1720,7 @@ function updateLightbox() {
   img.offsetHeight; // reflow
   img.style.animation = '';
   img.src = file;
-  document.getElementById('lightbox-name').textContent = file;
+  // Không hiện tên file xấu nữa — dùng nút copy link
   document.getElementById('lb-counter').textContent =
     `${lightboxIndex + 1} / ${currentImages.length}`;
 }
@@ -1719,12 +1788,181 @@ function enterSite() {
 }
 
 // ══════════════════════════════════════════
+//  COPY IMAGE LINK
+// ══════════════════════════════════════════
+function copyCurrentImageLink() {
+  const file = currentImages[lightboxIndex];
+  // Tạo absolute URL từ path tương đối
+  const url = new URL(file, window.location.href).href;
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('✓ Đã copy link ảnh');
+  }).catch(() => {
+    // Fallback nếu clipboard API không khả dụng
+    const ta = document.createElement('textarea');
+    ta.value = url;
+    ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('✓ Đã copy link ảnh');
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('copy-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ══════════════════════════════════════════
+//  DISABLE RIGHT-CLICK + DRAG ẢNH
+// ══════════════════════════════════════════
+document.addEventListener('contextmenu', function(e) {
+  if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') {
+    e.preventDefault();
+  }
+});
+
+document.addEventListener('dragstart', function(e) {
+  if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') {
+    e.preventDefault();
+  }
+});
+
+// CSS bổ sung cho img chống kéo
+(function() {
+  const style = document.createElement('style');
+  style.textContent = `
+    img, video { -webkit-user-drag: none; user-drag: none; -webkit-user-select: none; user-select: none; }
+    #lightbox-img { pointer-events: none; }
+  `;
+  document.head.appendChild(style);
+})();
+
+// ══════════════════════════════════════════
+//  LIGHTBOX TOUCH SWIPE (MOBILE)
+// ══════════════════════════════════════════
+(function() {
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchStartTime = 0;
+  const lb = document.getElementById('lightbox');
+
+  lb.addEventListener('touchstart', function(e) {
+    const t = e.changedTouches[0];
+    touchStartX = t.clientX;
+    touchStartY = t.clientY;
+    touchStartTime = Date.now();
+  }, { passive: true });
+
+  lb.addEventListener('touchend', function(e) {
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
+    const dt = Date.now() - touchStartTime;
+    // Chỉ tính swipe nhanh + ngang > dọc
+    if (dt < 400 && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      if (dx < 0) lightboxNav(1);   // swipe trái → ảnh tiếp
+      else lightboxNav(-1);         // swipe phải → ảnh trước
+    }
+  }, { passive: true });
+})();
+
+// ══════════════════════════════════════════
+//  LAZY LOAD VỚI IntersectionObserver
+// ══════════════════════════════════════════
+function buildGalleryLazy(files) {
+  currentImages = files;
+  const grid = document.getElementById('masonry-grid');
+  const empty = document.getElementById('empty-state');
+  const countEl = document.getElementById('photo-count');
+
+  grid.innerHTML = '';
+
+  if (!files.length) {
+    empty.style.display = 'block';
+    countEl.textContent = '0';
+    return;
+  }
+
+  empty.style.display = 'none';
+  countEl.textContent = files.length;
+
+  // ── VIDEO CARD ──
+  const videoCard = document.createElement('div');
+  videoCard.className = 'masonry-item video-card';
+  videoCard.innerHTML = `
+    <div class="video-thumb-wrap">
+      <video src="image/truongm.mp4" preload="metadata" muted playsinline
+             onloadedmetadata="this.currentTime=2"></video>
+      <div class="video-badge">VIDEO</div>
+      <div class="video-play-btn">
+        <div class="video-play-circle">▶</div>
+      </div>
+    </div>
+    <div class="video-caption-bar">
+      <span class="video-caption-dot"></span>
+      <span class="video-caption-text">MĐC đã từng vui như thế này</span>
+    </div>
+  `;
+  videoCard.addEventListener('click', openVideoLightbox);
+  grid.appendChild(videoCard);
+
+  // IntersectionObserver cho lazy load thực sự
+  // src="" sẽ trigger onerror ngay → dùng 1x1 gif placeholder thay thế
+  const BLANK = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const img = entry.target.querySelector('img[data-src]');
+      if (img) {
+        const realSrc = img.dataset.src;
+        img.removeAttribute('data-src');
+        // Chỉ gắn error handler SAU khi biết src thật
+        img.addEventListener('error', () => {
+          const wrap = img.closest('.masonry-item');
+          if (wrap) wrap.remove();
+        }, { once: true });
+        img.addEventListener('load', () => {
+          img.style.opacity = '1';
+        }, { once: true });
+        img.src = realSrc;
+      }
+      obs.unobserve(entry.target);
+    });
+  }, {
+    rootMargin: '300px 0px',
+    threshold: 0
+  });
+
+  files.forEach((file, i) => {
+    const item = document.createElement('div');
+    item.className = 'masonry-item';
+    item.style.animationDelay = `${Math.min(i * 0.035, 1.5)}s`;
+    item.innerHTML = `
+      <img data-src="${file}" src="${BLANK}" alt="Phốt ${i+1}"
+           style="opacity:0;transition:opacity 0.4s;background:var(--surface2);min-height:80px;">
+      <div class="img-overlay">
+        <div class="img-overlay-num">${String(i+1).padStart(2,'0')}</div>
+        <div class="img-overlay-icon">⊕</div>
+      </div>
+    `;
+    item.addEventListener('click', () => openLightbox(i));
+    grid.appendChild(item);
+    observer.observe(item);
+  });
+}
+
+// ══════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════
 (function init() {
   buildTicker();
 
-  buildGallery(IMAGE_FILES);
+  buildGalleryLazy(IMAGE_FILES);
 
   requestAnimationFrame(() => {
     setTimeout(() => {
