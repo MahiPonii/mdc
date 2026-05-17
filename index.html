@@ -939,6 +939,34 @@
     text-transform: uppercase;
   }
 
+  .deleted-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 13px;
+    height: 13px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 8px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .deleted-post-card {
+    opacity: 0.8;
+    border-color: rgba(214,48,49,0.3) !important;
+  }
+
+  .deleted-post-card:hover {
+    border-color: var(--accent) !important;
+    opacity: 1;
+  }
+
   .social-link-arrow {
     margin-left: auto;
     font-size: 11px;
@@ -1213,6 +1241,31 @@
   </div>
 </div>
 
+<!-- ════════ DELETED POST MODAL ════════ -->
+<div id="deleted-post-modal" style="display:none;position:fixed;inset:0;background:rgba(4,4,4,0.92);z-index:10000;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(16px) saturate(0.3);">
+  <div style="background:var(--surface);border:1px solid var(--accent);border-radius:var(--radius-lg);max-width:420px;width:100%;padding:32px 28px 28px;box-shadow:0 40px 80px rgba(0,0,0,0.8),0 0 40px var(--accent-glow);animation:fadeUp 0.3s ease both;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <div style="width:40px;height:40px;background:rgba(214,48,49,0.15);border:1px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">⚠</div>
+      <div>
+        <div style="font-family:var(--font-display);font-weight:700;font-size:16px;letter-spacing:1.5px;color:var(--text-bright);text-transform:uppercase;">Bài đăng đã bị xóa</div>
+        <div style="font-size:10px;color:var(--text-dim);font-family:var(--font-mono);letter-spacing:1.5px;margin-top:3px;">Facebook · Bài đăng #1</div>
+      </div>
+    </div>
+    <p style="font-family:var(--font-body);font-size:13px;color:var(--text);line-height:1.8;margin-bottom:24px;">
+      Bài đăng này <strong style="color:var(--accent);">đã bị xóa</strong> khỏi Facebook và có thể không còn truy cập được nữa.<br><br>
+      Bạn có muốn tiếp tục truy cập vào đường dẫn đó không?
+    </p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button onclick="closeDeletedModal()" style="background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:var(--font-body);font-size:12px;font-weight:500;padding:9px 20px;border-radius:var(--radius);cursor:pointer;letter-spacing:0.5px;">
+        Ở lại trang này
+      </button>
+      <button onclick="proceedToDeletedPost()" style="background:var(--accent);border:none;color:#fff;font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;padding:9px 20px;border-radius:var(--radius);cursor:pointer;">
+        Tiếp tục ↗
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- ════════ APP ════════ -->
 <div id="app">
 
@@ -1244,14 +1297,14 @@
       <div class="social-bar-label">Bài đăng liên quan · Mạng xã hội</div>
       <div class="social-bar">
 
-        <a href="https://www.facebook.com/share/p/18WtkSfVj6/" target="_blank" rel="noopener" class="social-link-card">
-          <div class="social-icon">𝑓</div>
+        <div class="social-link-card deleted-post-card" onclick="showDeletedPostWarning('https://www.facebook.com/share/p/18WtkSfVj6/')" style="cursor:pointer;">
+          <div class="social-icon" style="position:relative;">𝑓<span class="deleted-badge">!</span></div>
           <div class="social-link-text">
-            <div class="social-link-title">Bài đăng Facebook #1</div>
-            <div class="social-link-meta">Facebook · Phốt MĐC</div>
+            <div class="social-link-title" style="text-decoration:line-through;opacity:0.6;">Bài đăng Facebook #1</div>
+            <div class="social-link-meta" style="color:var(--accent);">⚠ Bài đăng đã bị xóa</div>
           </div>
-          <span class="social-link-arrow">↗</span>
-        </a>
+          <span class="social-link-arrow" style="color:var(--accent);">↗</span>
+        </div>
 
         <a href="https://www.facebook.com/share/p/18qTzH3odY/" target="_blank" rel="noopener" class="social-link-card">
           <div class="social-icon">𝑓</div>
@@ -1276,6 +1329,15 @@
           <div class="social-link-text">
             <div class="social-link-title">Bài đăng Facebook #4</div>
             <div class="social-link-meta">Facebook · Phốt MĐC</div>
+          </div>
+          <span class="social-link-arrow">↗</span>
+        </a>
+
+        <a href="https://www.threads.com/@duckieverse_/post/DYbXCXTktx7?xmt=AQG0MfZZbFwoeTha2oE5AMdWkLRBGXw_CwtI22m2xPgxXg" target="_blank" rel="noopener" class="social-link-card threads-card">
+          <div class="social-icon threads-icon">@</div>
+          <div class="social-link-text">
+            <div class="social-link-title">Threads · @duckieverse_</div>
+            <div class="social-link-meta">Threads · Phốt MĐC</div>
           </div>
           <span class="social-link-arrow">↗</span>
         </a>
@@ -1434,6 +1496,16 @@ const IMAGE_FILES = [
   'image/Screenshot 2026-05-17 085410.png',
   'image/Screenshot 2026-05-17 085502.png',
   'image/Screenshot 2026-05-17 085812.png',
+  'image/Screenshot 2026-05-17 134942.png',
+  'image/Screenshot 2026-05-17 135338.png',
+  'image/Screenshot 2026-05-17 135342.png',
+  'image/Screenshot 2026-05-17 135346.png',
+  'image/Screenshot 2026-05-17 135350.png',
+  'image/Screenshot 2026-05-17 140800.png',
+  'image/Screenshot 2026-05-17 140806.png',
+  'image/Screenshot 2026-05-17 140931.png',
+  'image/Screenshot 2026-05-17 141129.png',
+  'image/Screenshot 2026-05-17 141214.png',
 ];
 
 // ══════════════════════════════════════════
@@ -1623,6 +1695,42 @@ function enterSite() {
 
   setTimeout(enterSite, 2800);
 })();
+
+// ══════════════════════════════════════════
+//  DELETED POST MODAL
+// ══════════════════════════════════════════
+let deletedPostUrl = '';
+
+function showDeletedPostWarning(url) {
+  deletedPostUrl = url;
+  const modal = document.getElementById('deleted-post-modal');
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDeletedModal() {
+  const modal = document.getElementById('deleted-post-modal');
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+  deletedPostUrl = '';
+}
+
+function proceedToDeletedPost() {
+  if (deletedPostUrl) {
+    window.open(deletedPostUrl, '_blank', 'noopener,noreferrer');
+  }
+  closeDeletedModal();
+}
+
+document.getElementById('deleted-post-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeDeletedModal();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('deleted-post-modal').style.display === 'flex') {
+    closeDeletedModal();
+  }
+});
 
 async function tryAutoScan() {
   try {
