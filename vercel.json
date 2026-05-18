@@ -3,28 +3,32 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options",              "value": "nosniff" },
-        { "key": "X-Frame-Options",                     "value": "DENY" },
-        { "key": "X-XSS-Protection",                    "value": "1; mode=block" },
-        { "key": "Referrer-Policy",                     "value": "no-referrer" },
-        { "key": "Permissions-Policy",                  "value": "camera=(), microphone=(), geolocation=(), interest-cohort=(), browsing-topics=()" },
-        { "key": "Strict-Transport-Security",           "value": "max-age=63072000; includeSubDomains; preload" },
-        { "key": "Content-Security-Policy",             "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self'; connect-src 'none'; frame-src 'none'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'none';" },
-        { "key": "Cross-Origin-Opener-Policy",          "value": "same-origin" },
-        { "key": "Cross-Origin-Embedder-Policy",        "value": "require-corp" },
-        { "key": "Cross-Origin-Resource-Policy",        "value": "same-origin" },
-        { "key": "X-Robots-Tag",                        "value": "noindex, nofollow, noarchive, nosnippet, noimageindex, nocache" },
-        { "key": "X-Permitted-Cross-Domain-Policies",   "value": "none" },
-        { "key": "X-DNS-Prefetch-Control",              "value": "off" },
-        { "key": "Pragma",                              "value": "no-cache" },
-        { "key": "Cache-Control",                       "value": "no-cache, must-revalidate" }
+        { "key": "X-Content-Type-Options",            "value": "nosniff" },
+        { "key": "X-Frame-Options",                   "value": "DENY" },
+        { "key": "X-XSS-Protection",                  "value": "1; mode=block" },
+        { "key": "Referrer-Policy",                   "value": "no-referrer" },
+        { "key": "Permissions-Policy",                "value": "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), bluetooth=(), browsing-topics=(), camera=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), hid=(), identity-credentials-get=(), idle-detection=(), interest-cohort=(), keyboard-map=(), local-fonts=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-create=(), publickey-credentials-get=(), screen-wake-lock=(), serial=(), speaker-selection=(), storage-access=(), usb=(), web-share=(), xr-spatial-tracking=()" },
+        { "key": "Strict-Transport-Security",         "value": "max-age=63072000; includeSubDomains; preload" },
+        { "key": "Content-Security-Policy",           "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'none'; frame-src 'none'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; worker-src 'none'; manifest-src 'none'; upgrade-insecure-requests;" },
+        { "key": "Cross-Origin-Opener-Policy",        "value": "same-origin" },
+        { "key": "Cross-Origin-Embedder-Policy",      "value": "require-corp" },
+        { "key": "Cross-Origin-Resource-Policy",      "value": "same-origin" },
+        { "key": "X-Robots-Tag",                      "value": "noindex, nofollow, noarchive, nosnippet, noimageindex, nocache" },
+        { "key": "X-Permitted-Cross-Domain-Policies", "value": "none" },
+        { "key": "X-DNS-Prefetch-Control",            "value": "off" },
+        { "key": "Pragma",                            "value": "no-cache" },
+        { "key": "Cache-Control",                     "value": "no-cache, must-revalidate" },
+        { "key": "Vary",                              "value": "Accept-Encoding" }
       ]
     },
 
     {
       "source": "/index.html",
       "headers": [
-        { "key": "Cache-Control", "value": "no-cache, must-revalidate" }
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
+        { "key": "Pragma",        "value": "no-cache" },
+        { "key": "Expires",       "value": "0" },
+        { "key": "Link",          "value": "<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, </logo.png>; rel=preload; as=image; fetchpriority=high" }
       ]
     },
 
@@ -33,14 +37,46 @@
       "headers": [
         { "key": "Cross-Origin-Resource-Policy", "value": "same-origin" },
         { "key": "X-Content-Type-Options",       "value": "nosniff" },
-        { "key": "Cache-Control",                "value": "public, max-age=604800, stale-while-revalidate=86400" }
+        { "key": "Cache-Control",                "value": "public, max-age=604800, stale-while-revalidate=86400, immutable" },
+        { "key": "Accept-Ranges",                "value": "bytes" },
+        { "key": "Vary",                         "value": "Accept-Encoding, Accept" }
+      ]
+    },
+
+    {
+      "source": "/image/:filename.mp4",
+      "headers": [
+        { "key": "Cross-Origin-Resource-Policy", "value": "same-origin" },
+        { "key": "X-Content-Type-Options",       "value": "nosniff" },
+        { "key": "Cache-Control",                "value": "public, max-age=604800, stale-while-revalidate=86400, immutable" },
+        { "key": "Accept-Ranges",                "value": "bytes" },
+        { "key": "Content-Type",                 "value": "video/mp4" }
+      ]
+    },
+
+    {
+      "source": "/icon/:filename",
+      "headers": [
+        { "key": "Cross-Origin-Resource-Policy", "value": "same-origin" },
+        { "key": "X-Content-Type-Options",       "value": "nosniff" },
+        { "key": "Cache-Control",                "value": "public, max-age=2592000, stale-while-revalidate=86400, immutable" },
+        { "key": "Vary",                         "value": "Accept-Encoding" }
+      ]
+    },
+
+    {
+      "source": "/:filename.ico",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=2592000, immutable" },
+        { "key": "Content-Type",  "value": "image/x-icon" }
       ]
     },
 
     {
       "source": "/:filename",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=2592000, stale-while-revalidate=86400" }
+        { "key": "Cache-Control", "value": "public, max-age=2592000, stale-while-revalidate=86400" },
+        { "key": "Vary",          "value": "Accept-Encoding" }
       ]
     }
   ],

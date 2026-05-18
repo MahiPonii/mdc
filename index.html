@@ -25,9 +25,14 @@
 <!-- (không có generator tag) -->
 <link rel="icon" type="image/x-icon" href="./logo.ico">
 <title>MĐC Phốt Archive</title>
+<!-- Preload logo (LCP candidate) -->
+<link rel="preload" href="logo.png" as="image" fetchpriority="high">
+<!-- Preconnect Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<!-- Non-blocking font load: tải sau khi trang render xong, giảm render-blocking -->
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,400&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,400&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"></noscript>
 <style>
   :root {
     --bg: #0a0a0a;
@@ -51,7 +56,7 @@
     /* Font stack với Vietnamese fallback */
     --font-display: 'Barlow Condensed', 'Be Vietnam Pro', system-ui, sans-serif;
     --font-body: 'Be Vietnam Pro', system-ui, sans-serif;
-    --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    --font-mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
     --noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
   }
 
@@ -474,6 +479,8 @@
       border-color 0.2s;
     position: relative;
     animation: fadeInUp 0.5s ease both;
+    /* Tối ưu rendering: browser tự tính kích thước độc lập mỗi item */
+    contain: layout style;
   }
 
   .masonry-item:hover {
@@ -492,6 +499,8 @@
     display: block;
     background: var(--surface2);
     transition: filter 0.25s;
+    /* Gợi ý browser decode ảnh song song, không chặn main thread */
+    image-rendering: auto;
   }
 
   .masonry-item:hover img {
@@ -1069,6 +1078,8 @@
     display: block;
     opacity: 0.7;
     transition: opacity 0.3s;
+    /* Chỉ tải metadata, không pre-buffer video data */
+    will-change: opacity;
   }
 
   .masonry-item.video-card:hover .video-thumb-wrap video {
@@ -1245,6 +1256,7 @@
 
   <div class="splash-logo-row">
     <img class="splash-logo-img" id="splash-logo-img" src="logo.png" alt="Logo MĐC"
+         decoding="async" fetchpriority="high"
          onerror="this.style.display='none'; document.getElementById('splash-logo-fallback').style.display='flex'">
     <div class="splash-logo-fallback" id="splash-logo-fallback">MĐC</div>
   </div>
@@ -1649,60 +1661,6 @@ function buildTicker() {
 let currentImages = [];
 let lightboxIndex = 0;
 
-function buildGallery(files) {
-  currentImages = files;
-  const grid = document.getElementById('masonry-grid');
-  const empty = document.getElementById('empty-state');
-  const countEl = document.getElementById('photo-count');
-
-  grid.innerHTML = '';
-
-  if (!files.length) {
-    empty.style.display = 'block';
-    countEl.textContent = '0';
-    return;
-  }
-
-  empty.style.display = 'none';
-  countEl.textContent = files.length;
-
-  // ── VIDEO CARD (ưu tiên đầu tiên) ──
-  const videoCard = document.createElement('div');
-  videoCard.className = 'masonry-item video-card';
-  videoCard.innerHTML = `
-    <div class="video-thumb-wrap">
-      <video src="image/truongm.mp4" preload="metadata" muted playsinline
-             onloadedmetadata="this.currentTime=2"></video>
-      <div class="video-badge">VIDEO</div>
-      <div class="video-play-btn">
-        <div class="video-play-circle">▶</div>
-      </div>
-    </div>
-    <div class="video-caption-bar">
-      <span class="video-caption-dot"></span>
-      <span class="video-caption-text">MĐC đã từng vui như thế này</span>
-    </div>
-  `;
-  videoCard.addEventListener('click', openVideoLightbox);
-  grid.appendChild(videoCard);
-
-  files.forEach((file, i) => {
-    const item = document.createElement('div');
-    item.className = 'masonry-item';
-    item.style.animationDelay = `${Math.min(i * 0.035, 1.5)}s`;
-    item.innerHTML = `
-      <img src="${file}" alt="Phốt ${i+1}" loading="lazy"
-           onerror="this.closest('.masonry-item').remove()">
-      <div class="img-overlay">
-        <div class="img-overlay-num">${String(i+1).padStart(2,'0')}</div>
-        <div class="img-overlay-icon">⊕</div>
-      </div>
-    `;
-    item.addEventListener('click', () => openLightbox(i));
-    grid.appendChild(item);
-  });
-}
-
 // ══════════════════════════════════════════
 //  LIGHTBOX
 // ══════════════════════════════════════════
@@ -1792,15 +1750,20 @@ function enterSite() {
 // ══════════════════════════════════════════
 function copyCurrentImageLink() {
   const file = currentImages[lightboxIndex];
-  // Tạo absolute URL từ path tương đối
-  const url = new URL(file, window.location.href).href;
-  navigator.clipboard.writeText(url).then(() => {
+  // Chỉ tạo URL nếu file path hợp lệ (không cho javascript: etc.)
+  let url;
+  try {
+    url = new URL(file, window.location.href);
+    // Đảm bảo cùng origin, không bị redirect ra ngoài
+    if (url.origin !== window.location.origin) return;
+  } catch (_) { return; }
+
+  navigator.clipboard.writeText(url.href).then(() => {
     showToast('✓ Đã copy link ảnh');
   }).catch(() => {
-    // Fallback nếu clipboard API không khả dụng
     const ta = document.createElement('textarea');
-    ta.value = url;
-    ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+    ta.value = url.href;
+    ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;pointer-events:none';
     document.body.appendChild(ta);
     ta.select();
     document.execCommand('copy');
@@ -1895,7 +1858,9 @@ function buildGalleryLazy(files) {
   videoCard.className = 'masonry-item video-card';
   videoCard.innerHTML = `
     <div class="video-thumb-wrap">
-      <video src="image/truongm.mp4" preload="metadata" muted playsinline
+      <video src="image/truongm.mp4" preload="none" muted playsinline
+             poster="image/truongm_thumb.jpg"
+             onmouseover="if(this.readyState<1){this.load()}"
              onloadedmetadata="this.currentTime=2"></video>
       <div class="video-badge">VIDEO</div>
       <div class="video-play-btn">
@@ -1921,7 +1886,6 @@ function buildGalleryLazy(files) {
       if (img) {
         const realSrc = img.dataset.src;
         img.removeAttribute('data-src');
-        // Chỉ gắn error handler SAU khi biết src thật
         img.addEventListener('error', () => {
           const wrap = img.closest('.masonry-item');
           if (wrap) wrap.remove();
@@ -1934,7 +1898,8 @@ function buildGalleryLazy(files) {
       obs.unobserve(entry.target);
     });
   }, {
-    rootMargin: '300px 0px',
+    // 200px đủ để preload, giảm từ 300px → ít request hơn khi scroll nhanh
+    rootMargin: '200px 0px',
     threshold: 0
   });
 
@@ -1942,8 +1907,11 @@ function buildGalleryLazy(files) {
     const item = document.createElement('div');
     item.className = 'masonry-item';
     item.style.animationDelay = `${Math.min(i * 0.035, 1.5)}s`;
+    // fetchpriority=high cho 6 ảnh đầu (above-fold), còn lại low
+    const priority = i < 6 ? 'high' : 'low';
     item.innerHTML = `
       <img data-src="${file}" src="${BLANK}" alt="Phốt ${i+1}"
+           decoding="async" fetchpriority="${priority}"
            style="opacity:0;transition:opacity 0.4s;background:var(--surface2);min-height:80px;">
       <div class="img-overlay">
         <div class="img-overlay-num">${String(i+1).padStart(2,'0')}</div>
@@ -1960,7 +1928,12 @@ function buildGalleryLazy(files) {
 //  INIT
 // ══════════════════════════════════════════
 (function init() {
-  buildTicker();
+  // Ticker không critical → defer sang idle time
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(buildTicker, { timeout: 1000 });
+  } else {
+    setTimeout(buildTicker, 0);
+  }
 
   buildGalleryLazy(IMAGE_FILES);
 
@@ -1996,7 +1969,15 @@ function closeDeletedModal() {
 
 function proceedToDeletedPost() {
   if (deletedPostUrl) {
-    window.open(deletedPostUrl, '_blank', 'noopener,noreferrer');
+    // Chỉ cho phép mở URL https:// để tránh javascript: hoặc data: injection
+    try {
+      const parsed = new URL(deletedPostUrl);
+      if (parsed.protocol === 'https:') {
+        window.open(parsed.href, '_blank', 'noopener,noreferrer');
+      }
+    } catch (_) {
+      // URL không hợp lệ → không làm gì
+    }
   }
   closeDeletedModal();
 }
