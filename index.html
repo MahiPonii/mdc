@@ -17,12 +17,18 @@
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="X-XSS-Protection" content="1; mode=block">
 <!-- Content Security Policy qua meta (frame-ancestors chỉ hoạt động qua HTTP header → xem vercel.json) -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; script-src 'self' 'unsafe-inline';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; script-src 'self' 'unsafe-inline'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests;">
 <!-- X-Frame-Options & frame-ancestors được set qua vercel.json (HTTP header) -->
 <!-- Tắt DNS prefetch -->
 <meta http-equiv="x-dns-prefetch-control" content="off">
+<!-- Chặn speculative prefetch leak -->
+<meta name="referrer" content="no-referrer">
 <!-- Ẩn thông tin trình tạo -->
 <!-- (không có generator tag) -->
+<!-- Chặn feature detection fingerprinting -->
+<meta http-equiv="origin-trial" content="">
+<!-- Disable FLoC / Topics API -->
+<meta http-equiv="Permissions-Policy" content="interest-cohort=(), browsing-topics=()">
 <link rel="icon" type="image/x-icon" href="./logo.ico">
 <title>MĐC Phốt Archive</title>
 <!-- Preload logo (LCP candidate) -->
@@ -834,6 +840,197 @@
     color: var(--accent);
   }
 
+  /* ─────────────────────────────── */
+  /*  UPDATE NOTIFICATION POPUP      */
+  /* ─────────────────────────────── */
+  #update-popup {
+    position: fixed !important;
+    bottom: 28px;
+    right: 28px;
+    z-index: 99998;
+    max-width: 340px;
+    width: calc(100vw - 48px);
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-lg);
+    box-shadow:
+      0 24px 60px rgba(0,0,0,0.8),
+      0 0 0 1px rgba(214,48,49,0.15),
+      0 0 40px var(--accent-glow);
+    padding: 20px 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transform: translateY(calc(100% + 40px)) scale(0.95);
+    opacity: 0;
+    transition: transform 0.45s cubic-bezier(0.23,1,0.32,1), opacity 0.35s ease;
+    pointer-events: none;
+  }
+
+  #update-popup.show {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .upop-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .upop-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: rgba(214,48,49,0.15);
+    border: 1px solid rgba(214,48,49,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+  }
+
+  .upop-text { flex: 1; min-width: 0; }
+
+  .upop-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    color: var(--text-bright);
+    text-transform: uppercase;
+    line-height: 1.2;
+    margin-bottom: 5px;
+  }
+
+  .upop-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(214,48,49,0.12);
+    border: 1px solid rgba(214,48,49,0.3);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .upop-badge::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 1.4s ease infinite;
+  }
+
+  .upop-desc {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  .upop-desc strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .upop-features {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+  }
+
+  .upop-feature {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+
+  .upop-feature-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .upop-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .upop-dismiss {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 6px 0;
+    transition: color 0.15s;
+    flex-shrink: 0;
+  }
+
+  .upop-dismiss:hover { color: var(--text-dim); }
+
+  .upop-confirm {
+    background: var(--accent);
+    border: none;
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 8px 18px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.15s;
+    flex-shrink: 0;
+  }
+
+  .upop-confirm:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  .upop-close-x {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+  }
+
+  .upop-close-x:hover { color: var(--text-dim); background: var(--surface3); }
+
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
@@ -1492,6 +1689,30 @@
 
 </div>
 
+<!-- UPDATE NOTIFICATION POPUP -->
+<div id="update-popup" role="dialog" aria-modal="true" aria-label="Thông báo cập nhật">
+  <button class="upop-close-x" onclick="dismissUpdatePopup()" aria-label="Đóng">✕</button>
+  <div class="upop-header">
+    <div class="upop-icon">⚡</div>
+    <div class="upop-text">
+      <div class="upop-badge">Vừa cập nhật</div>
+      <div class="upop-title">Lazy Loading cho toàn bộ ảnh</div>
+    </div>
+  </div>
+  <div class="upop-desc">
+    Trang đã được nâng cấp để <strong>tải ảnh theo cuộn</strong> ảnh chỉ hiển thị khi bạn lướt tới, giúp trang tải nhanh hơn và <strong>giảm tải server đáng kể</strong>.
+  </div>
+  <div class="upop-features">
+    <div class="upop-feature"><span class="upop-feature-dot"></span>Ảnh tải khi lướt đến vùng nhìn thấy</div>
+    <div class="upop-feature"><span class="upop-feature-dot"></span>6 ảnh đầu load ngay để tránh layout shift</div>
+    <div class="upop-feature"><span class="upop-feature-dot"></span>Preload 200px trước khi ảnh vào viewport</div>
+  </div>
+  <div class="upop-actions">
+    <button class="upop-dismiss" onclick="dismissUpdatePopup()">Không hiện lại 1 giờ</button>
+    <button class="upop-confirm" onclick="dismissUpdatePopup()">Đã hiểu ✓</button>
+  </div>
+</div>
+
 <!-- COPY TOAST -->
 <div id="copy-toast">✓ Đã copy link ảnh</div>
 
@@ -1632,6 +1853,8 @@ const IMAGE_FILES = [
   'image/Screenshot 2026-05-17 202202.png',
   'image/Screenshot 2026-05-17 203848.png',
   'image/Screenshot 2026-05-17 204152.png',
+  'image/Screenshot 2026-05-18 184230.png',
+  'image/Screenshot 2026-05-18 184335.png',
 ];
 
 // ══════════════════════════════════════════
@@ -1981,6 +2204,44 @@ function proceedToDeletedPost() {
   }
   closeDeletedModal();
 }
+
+// ══════════════════════════════════════════
+//  UPDATE NOTIFICATION POPUP (1x / giờ)
+// ══════════════════════════════════════════
+(function initUpdatePopup() {
+  const POPUP_KEY = 'mdc_upop_ts';
+  const ONE_HOUR  = 60 * 60 * 1000;
+
+  function shouldShowPopup() {
+    try {
+      const last = parseInt(localStorage.getItem(POPUP_KEY) || '0', 10);
+      return (Date.now() - last) > ONE_HOUR;
+    } catch (_) {
+      // localStorage bị block (private mode nghiêm ngặt) → không hiện
+      return false;
+    }
+  }
+
+  function showUpdatePopup() {
+    const el = document.getElementById('update-popup');
+    if (!el) return;
+    // Delay nhỏ để trang app đã hiện xong
+    setTimeout(() => el.classList.add('show'), 400);
+  }
+
+  // Gán hàm dismiss ra global scope để onclick dùng được
+  window.dismissUpdatePopup = function() {
+    const el = document.getElementById('update-popup');
+    if (!el) return;
+    el.classList.remove('show');
+    try { localStorage.setItem(POPUP_KEY, String(Date.now())); } catch (_) {}
+  };
+
+  // Trigger sau khi splash xong (~3.2s) nếu đủ điều kiện
+  if (shouldShowPopup()) {
+    setTimeout(showUpdatePopup, 3200);
+  }
+})();
 
 document.getElementById('deleted-post-modal').addEventListener('click', function(e) {
   if (e.target === this) closeDeletedModal();
