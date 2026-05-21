@@ -1031,7 +1031,210 @@
 
   .upop-close-x:hover { color: var(--text-dim); background: var(--surface3); }
 
+  /* ─────────────────────────────── */
+  /*  SHUTDOWN NOTICE OVERLAY        */
+  /* ─────────────────────────────── */
+  #shutdown-notice {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(4,4,4,0.88);
+    z-index: 10001;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    backdrop-filter: blur(20px) saturate(0.2);
+    animation: lbFadeIn 0.35s ease both;
+  }
+
+  #shutdown-notice.open { display: flex; }
+
+  .sdn-inner {
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-lg);
+    max-width: 480px;
+    width: 100%;
+    padding: 36px 32px 28px;
+    box-shadow:
+      0 40px 80px rgba(0,0,0,0.85),
+      0 0 0 1px rgba(214,48,49,0.2),
+      0 0 60px var(--accent-glow);
+    animation: fadeUp 0.4s cubic-bezier(0.23,1,0.32,1) both;
+    position: relative;
+  }
+
+  .sdn-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(214,48,49,0.12);
+    border: 1px solid rgba(214,48,49,0.3);
+    border-radius: 4px;
+    padding: 3px 10px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .sdn-eyebrow::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 1.4s ease infinite;
+  }
+
+  .sdn-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(26px, 5vw, 36px);
+    color: var(--text-bright);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    line-height: 1.05;
+    margin-bottom: 8px;
+  }
+
+  .sdn-title span { color: var(--accent); }
+
+  .sdn-date-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .sdn-date-badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent2);
+    background: rgba(225,112,85,0.1);
+    border: 1px solid rgba(225,112,85,0.25);
+    border-radius: 4px;
+    padding: 3px 10px;
+    letter-spacing: 1.5px;
+  }
+
+  .sdn-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent), var(--border2), transparent);
+    margin-bottom: 18px;
+  }
+
+  .sdn-body {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.85;
+    font-weight: 300;
+    margin-bottom: 20px;
+  }
+
+  .sdn-body strong { color: var(--text-bright); font-weight: 600; }
+  .sdn-body em { color: var(--accent2); font-style: italic; }
+
+  .sdn-points {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 24px;
+  }
+
+  .sdn-point {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .sdn-point-icon {
+    color: var(--accent);
+    font-size: 11px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .sdn-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  .sdn-drive-btn {
+    background: var(--accent);
+    border: none;
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 10px 22px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.15s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .sdn-drive-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  .sdn-ok-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.3px;
+  }
+
+  .sdn-ok-btn:hover { background: var(--surface3); border-color: var(--border2); color: var(--text-bright); }
+
+  .sdn-countdown {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .sdn-days-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
   @keyframes fadeUp {
+
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
   }
@@ -1716,6 +1919,56 @@
 <!-- COPY TOAST -->
 <div id="copy-toast">✓ Đã copy link ảnh</div>
 
+<!-- SHUTDOWN NOTICE -->
+<div id="shutdown-notice" role="dialog" aria-modal="true" aria-label="Thông báo trang sắp đóng">
+  <div class="sdn-inner">
+    <div class="sdn-countdown">
+      <span class="sdn-days-num" id="sdn-days">7</span>
+      <span>ngày còn lại</span>
+    </div>
+
+    <div class="sdn-eyebrow">Thông báo quan trọng</div>
+
+    <div class="sdn-title">Trang sẽ <span>đóng cửa</span><br>sau 7 ngày nữa</div>
+
+    <div class="sdn-date-row">
+      <div class="sdn-date-badge">Ngừng hoạt động: 28/05/2026</div>
+    </div>
+
+    <div class="sdn-divider"></div>
+
+    <div class="sdn-body">
+      Trang này đã <strong>hoàn thành sứ mệnh</strong> của mình, lưu lại những gì cần được nhớ.<br>
+      Sau ngày <strong>28/05/2026</strong>, trang sẽ <em>không còn cập nhật, không còn hoạt động</em> và chính thức dừng lại.
+    </div>
+
+    <div class="sdn-points">
+      <div class="sdn-point">
+        <span class="sdn-point-icon">✗</span>
+        <span>Không còn bất kỳ cập nhật nào sau ngày 28/05</span>
+      </div>
+      <div class="sdn-point">
+        <span class="sdn-point-icon">✗</span>
+        <span>Trang sẽ ngừng hoạt động vì sứ mệnh đã hoàn thành</span>
+      </div>
+      <div class="sdn-point">
+        <span class="sdn-point-icon">↗</span>
+        <span>Toàn bộ ảnh và tư liệu vẫn được lưu trữ trên <strong>Google Drive</strong></span>
+      </div>
+    </div>
+
+    <div class="sdn-actions">
+      <button class="sdn-ok-btn" onclick="closeShutdownNotice()">Đã hiểu</button>
+      <a class="sdn-drive-btn"
+         href="https://drive.google.com/drive/folders/1HdiGzBB7lcWCEpz1zRfrdI-y_3Fw1nLu?usp=sharing"
+         target="_blank" rel="noopener noreferrer"
+         onclick="closeShutdownNotice()">
+        📁 Xem trên Drive ↗
+      </a>
+    </div>
+  </div>
+</div>
+
 <script>
 // ══════════════════════════════════════════
 //  IMAGE LIST — cập nhật mỗi lần thêm ảnh
@@ -2252,6 +2505,70 @@ document.addEventListener('keydown', e => {
     closeDeletedModal();
   }
 });
+
+// ══════════════════════════════════════════
+//  SHUTDOWN NOTICE
+// ══════════════════════════════════════════
+(function initShutdownNotice() {
+  const SHUTDOWN_DATE = new Date('2026-05-28T23:59:59');
+  const SESSION_KEY   = 'mdc_shutdown_seen';
+
+  // Tính số ngày còn lại
+  function daysLeft() {
+    const now  = new Date();
+    const diff = SHUTDOWN_DATE - now;
+    if (diff <= 0) return 0;
+    return Math.ceil(diff / (1000 * 60 * 60 * 24));
+  }
+
+  // Cập nhật số ngày trên UI
+  const daysEl = document.getElementById('sdn-days');
+  if (daysEl) daysEl.textContent = daysLeft();
+
+  // Chỉ hiện nếu trang chưa đóng cửa VÀ chưa dismiss trong session này
+  function shouldShow() {
+    if (daysLeft() <= 0) return false;
+    try {
+      return !sessionStorage.getItem(SESSION_KEY);
+    } catch (_) {
+      return true;
+    }
+  }
+
+  window.closeShutdownNotice = function() {
+    const el = document.getElementById('shutdown-notice');
+    if (!el) return;
+    el.style.opacity = '0';
+    el.style.transition = 'opacity 0.3s ease';
+    setTimeout(() => {
+      el.classList.remove('open');
+      el.style.opacity = '';
+      el.style.transition = '';
+    }, 300);
+    try { sessionStorage.setItem(SESSION_KEY, '1'); } catch (_) {}
+  };
+
+  // Click backdrop để đóng
+  document.getElementById('shutdown-notice').addEventListener('click', function(e) {
+    if (e.target === this) closeShutdownNotice();
+  });
+
+  // ESC để đóng
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' &&
+        document.getElementById('shutdown-notice').classList.contains('open')) {
+      closeShutdownNotice();
+    }
+  });
+
+  // Hiện sau khi splash xong (~3.4s) + delay thêm 500ms cho đẹp
+  if (shouldShow()) {
+    setTimeout(() => {
+      const el = document.getElementById('shutdown-notice');
+      if (el) el.classList.add('open');
+    }, 3400);
+  }
+})();
 
 </script>
 </body>
